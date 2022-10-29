@@ -22,6 +22,8 @@ from stable_baselines import PPO1
 import os
 import sys
 import inspect
+from tensorflow.python.framework import graph_util
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
@@ -57,10 +59,14 @@ for i in range(0, 6):
         saver.save(training_sess, "./pcc_model_%d.ckpt" % i)
     model.learn(total_timesteps=(1600 * 410))
 
+constant_graph = graph_util.convert_variables_to_constants(training_sess, training_sess.graph_def, ['model/pi/add'])
+with tf.gfile.FastGFile("saved_model.pb",mode="wb") as f:
+    f.write(constant_graph.SerializeToString())
+
 ##
 #   Save the model to the location specified below.
 ##
-default_export_dir = "/tmp/pcc_saved_models/model_A/"
+default_export_dir = "./model_A/"
 export_dir = arg_or_default("--model-dir", default=default_export_dir)
 with model.graph.as_default():
 

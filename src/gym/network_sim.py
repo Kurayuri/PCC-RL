@@ -393,6 +393,9 @@ class SimulatedNetworkEnv(gym.Env):
         self.event_record = {"Events":[]}
         self.episodes_run = -1
 
+
+        self.violation_counter=0
+        self.occurence_counter=0
     def seed(self, seed=None):
         self.rand, seed = seeding.np_random(seed)
         return [seed]
@@ -418,6 +421,9 @@ class SimulatedNetworkEnv(gym.Env):
             sender.record_run()
         self.steps_taken += 1
         sender_obs = self._get_all_sender_obs()
+
+        # TODO: statistics for violations
+        
         sender_mi = self.senders[0].get_run_data()
         event = {}
         event["Name"] = "Step"
@@ -431,6 +437,7 @@ class SimulatedNetworkEnv(gym.Env):
         event["Latency Inflation"] = sender_mi.get("sent latency inflation")
         event["Latency Ratio"] = sender_mi.get("latency ratio")
         event["Send Ratio"] = sender_mi.get("send ratio")
+        event["Action"]=np.float(actions[0])
         #event["Cwnd"] = sender_mi.cwnd
         #event["Cwnd Used"] = sender_mi.cwnd_used
         self.event_record["Events"].append(event)
@@ -481,6 +488,13 @@ class SimulatedNetworkEnv(gym.Env):
         self.reward_ewma += 0.01 * self.reward_sum
         print("Reward: %0.2f, Ewma Reward: %0.2f" % (self.reward_sum, self.reward_ewma))
         self.reward_sum = 0.0
+        
+        with open("reward_log.log","a") as f:
+            f.write("%d,%0.2d,%0.2f,%d,%d\n"%(self.episodes_run,self.reward_sum, self.reward_ewma,self.violation_counter,self.occurence_counter))
+        
+        self.violation_counter=0
+        self.occurence_counter=0
+
         return self._get_all_sender_obs()
 
     def render(self, mode='human'):
