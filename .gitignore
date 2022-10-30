@@ -1,5 +1,6 @@
 model/*
 !model/model
+!model/ans
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

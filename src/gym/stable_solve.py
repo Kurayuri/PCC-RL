@@ -53,6 +53,11 @@ gamma = arg_or_default("--gamma", default=0.99)
 print("gamma = %f" % gamma)
 model = PPO1(MyMlpPolicy, env, verbose=1, schedule='constant', timesteps_per_actorbatch=8192, optim_batchsize=2048, gamma=gamma)
 
+try:
+    os.mkdir("ans")
+except:
+    pass
+
 i=0
 target_i=6
 while True:
@@ -74,7 +79,7 @@ while True:
 
 
 constant_graph = graph_util.convert_variables_to_constants(training_sess, training_sess.graph_def, ['model/pi/add'])
-with tf.gfile.FastGFile("saved_model.pb",mode="wb") as f:
+with tf.gfile.FastGFile("ans/saved_model.pb",mode="wb") as f:
     f.write(constant_graph.SerializeToString())
 
 ##
