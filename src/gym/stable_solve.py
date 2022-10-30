@@ -53,11 +53,25 @@ gamma = arg_or_default("--gamma", default=0.99)
 print("gamma = %f" % gamma)
 model = PPO1(MyMlpPolicy, env, verbose=1, schedule='constant', timesteps_per_actorbatch=8192, optim_batchsize=2048, gamma=gamma)
 
-for i in range(0, 6):
+i=0
+target_i=6
+while True:
     with model.graph.as_default():                                                                   
         saver = tf.train.Saver()                                                                     
         saver.save(training_sess, "./pcc_model_%d.ckpt" % i)
     model.learn(total_timesteps=(1600 * 410))
+    i+=1
+    if i>=target_i:
+        while True:
+            try:
+                val=int(input("\n"*5+"*"*40+"\nRounds to continue = "))
+                target_i+=val
+                break
+            except:
+                pass
+    if i>=target_i:
+        break
+
 
 constant_graph = graph_util.convert_variables_to_constants(training_sess, training_sess.graph_def, ['model/pi/add'])
 with tf.gfile.FastGFile("saved_model.pb",mode="wb") as f:
@@ -66,7 +80,7 @@ with tf.gfile.FastGFile("saved_model.pb",mode="wb") as f:
 ##
 #   Save the model to the location specified below.
 ##
-default_export_dir = "./model_A/"
+default_export_dir = "./model/"
 export_dir = arg_or_default("--model-dir", default=default_export_dir)
 with model.graph.as_default():
 
