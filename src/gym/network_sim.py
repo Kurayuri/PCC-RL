@@ -489,7 +489,7 @@ class SimulatedNetworkEnv(gym.Env):
         print("Reward: %0.2f, Ewma Reward: %0.2f" % (self.reward_sum, self.reward_ewma))
         self.reward_sum = 0.0
         
-        with open("./ans/reward_log.log","a") as f:
+        with open("./ans/reward_log.ans","a") as f:
             f.write("%d,%0.2d,%0.2f,%d,%d\n"%(self.episodes_run,self.reward_sum, self.reward_ewma,self.violation_counter,self.occurence_counter))
         
         self.violation_counter=0

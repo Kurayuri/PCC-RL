@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # plt.rcParams["font.family"]=['sans-serif']
 # plt.rcParams["font.sans-serif"]=['dengxian']
 
-with open("./model/ans/reward_log.log") as f:
+with open("./model/ans/reward_log.ans") as f:
     txt=f.readlines()
 
 rewards=[]
@@ -27,7 +27,7 @@ axes.plot(emwa_rewards,label="Aurora")
 
 
 try:
-    with open("./origin/ans/reward_log.log") as f:
+    with open("./origin/ans/reward_log.ans") as f:
         txt=f.readlines()   
     rewards=[]
     emwa_rewards=[]
